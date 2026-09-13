@@ -31,6 +31,7 @@
 
     --container: 1180px;
     --gutter: clamp(1.5rem, 5vw, 4rem);
+    --ease-smooth: cubic-bezier(.65,0,.35,1);
   }
 
   /* ============================================================
@@ -59,6 +60,50 @@
     outline-offset:3px;
     border-radius:2px;
   }
+
+  /* ============================================================
+     AMBIENT CINEMATIC BACKGROUND
+     A slow, drifting black-and-white gradient wash that sits
+     behind the whole page — this is the "gradient mixture" and
+     the continuous smooth motion that gives the site its
+     cinematic feel. Purely decorative; clicks pass through it.
+  ============================================================ */
+  .ambient-bg{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .ambient-bg span{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(90px);
+    mix-blend-mode:screen;
+  }
+  .blob-a{
+    width:56vw; height:56vw;
+    top:-18%; left:-14%;
+    background:radial-gradient(circle, rgba(255,255,255,0.16), transparent 65%);
+    animation:driftA 24s var(--ease-smooth) infinite alternate;
+  }
+  .blob-b{
+    width:48vw; height:48vw;
+    bottom:-20%; right:-12%;
+    background:radial-gradient(circle, rgba(255,255,255,0.12), transparent 65%);
+    animation:driftB 28s var(--ease-smooth) infinite alternate;
+  }
+  .blob-c{
+    width:38vw; height:38vw;
+    top:35%; left:38%;
+    background:radial-gradient(circle, rgba(255,255,255,0.08), transparent 65%);
+    animation:driftC 32s var(--ease-smooth) infinite alternate;
+  }
+  @keyframes driftA{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(6vw,8vh) scale(1.12); } }
+  @keyframes driftB{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(-7vw,-6vh) scale(1.1); } }
+  @keyframes driftC{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(-4vw,5vh) scale(1.08); } }
+
+  body > section, body > footer{ position:relative; z-index:1; }
 
   .section{ padding:clamp(5rem,10vw,8rem) var(--gutter); }
   .section-inner{ max-width:var(--container); margin:0 auto; }
@@ -290,7 +335,7 @@
     justify-content:space-between;
     flex-wrap:wrap;
     gap:1rem;
-    margin-bottom:3rem;
+    margin-bottom:2.5rem;
   }
   .work-header h2{
     font-size:clamp(2rem, 4vw, 3.25rem);
@@ -309,49 +354,84 @@
   }
 
   /* ============================================================
-     RECENT WORK
+     WORK TABS
+     The UI panel that switches between portfolio categories.
+     A pill-shaped indicator slides smoothly to the active tab.
   ============================================================ */
-  .recent-work-section{ padding-top:0; }
-  .recent-work-section h2{
-    font-size:clamp(1.75rem, 3.5vw, 2.5rem);
+  .work-tabs{
+    position:relative;
+    display:inline-flex;
+    flex-wrap:wrap;
+    gap:0.25rem;
+    padding:0.35rem;
     margin-bottom:2.5rem;
-  }
-  .work-grid{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:clamp(1.25rem, 3vw, 2rem);
-  }
-  .work-card{
+    background:rgba(245,245,244,0.05);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
     border:1px solid var(--border);
-    border-radius:12px;
-    padding:2rem;
+    border-radius:999px;
+  }
+  .tab-btn{
+    position:relative;
+    z-index:2;
+    padding:0.75rem 1.5rem;
+    border:none;
+    background:transparent;
+    border-radius:999px;
+    font-family:var(--font-body);
+    font-weight:500;
+    font-size:0.9rem;
+    color:var(--text-secondary);
+    cursor:pointer;
+    white-space:nowrap;
+    transition:color .45s var(--ease-smooth);
+  }
+  .tab-btn.active{ color:var(--bg); }
+  .tab-indicator{
+    position:absolute;
+    top:0.35rem;
+    bottom:0.35rem;
+    left:0.35rem;
+    border-radius:999px;
+    background:var(--text-primary);
+    z-index:1;
+    transition:left .5s var(--ease-smooth), width .5s var(--ease-smooth);
+  }
+
+  .tab-panels{ position:relative; }
+  .tab-panel{ display:none; }
+  .tab-panel.active{
+    display:block;
+    animation:fadeUp .6s var(--ease-smooth) both;
+  }
+  .empty-panel{
+    border:1px solid var(--border);
+    border-radius:16px;
     background:var(--bg-elevated);
-    transition:border-color .3s ease, transform .3s ease;
+    padding:clamp(3rem,8vw,5rem) 2rem;
+    text-align:center;
   }
-  .work-card:hover{
-    border-color:var(--border-strong);
-    transform:translateY(-4px);
-  }
-  .work-card .index{
+  .empty-panel .index{
     font-family:var(--font-display);
-    font-size:2.25rem;
+    font-size:2.5rem;
     font-weight:600;
     color:var(--text-tertiary);
     line-height:1;
   }
-  .work-card h3{
-    margin-top:1.5rem;
-    font-size:1.3rem;
+  .empty-panel h3{
+    margin-top:1rem;
+    font-size:1.5rem;
   }
-  .work-card .status{
+  .empty-panel .status{
     margin-top:0.75rem;
-    font-size:0.9rem;
+    font-size:0.95rem;
     font-style:italic;
     color:var(--text-tertiary);
   }
 
   @media (max-width:640px){
-    .work-grid{ grid-template-columns:1fr; }
+    .work-tabs{ width:100%; }
+    .tab-btn{ flex:1 1 auto; text-align:center; padding:0.7rem 0.9rem; font-size:0.8rem; }
   }
 
   /* ============================================================
@@ -494,7 +574,8 @@
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
     .hero-eyebrow, .hero-name .line-1, .hero-name .line-2,
-    .hero-description, .hero-buttons, .hero-visual, .photo-glow{
+    .hero-description, .hero-buttons, .hero-visual, .photo-glow,
+    .blob-a, .blob-b, .blob-c, .tab-panel.active{
       animation:none !important;
       opacity:1 !important;
       transform:none !important;
@@ -503,6 +584,13 @@
 </style>
 </head>
 <body>
+
+  <!-- Decorative, drifting black/white gradient behind everything -->
+  <div class="ambient-bg" aria-hidden="true">
+    <span class="blob-a"></span>
+    <span class="blob-b"></span>
+    <span class="blob-c"></span>
+  </div>
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="siteNav">
@@ -541,7 +629,7 @@
     </div>
   </section>
 
-  <!-- ============ SELECTED WORK / SHOWREEL ============ -->
+  <!-- ============ WORK (tabbed UI panel) ============ -->
   <section class="section" id="work">
     <div class="section-inner">
       <div class="work-header">
@@ -551,56 +639,58 @@
         </div>
       </div>
 
-      <div class="showreel">
-        <video controls playsinline preload="metadata">
-          <source src="main_complete.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
+      <!-- UI panel: category switcher with a smoothly sliding indicator -->
+      <div class="work-tabs" role="tablist" aria-label="Portfolio categories">
+        <button class="tab-btn active" role="tab" aria-selected="true" data-tab="cinematic">Cinematic Edit</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="anime">Anime / AMV Edit</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="motion">Motion Graphics</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="shortform">Short Form Content</button>
+        <span class="tab-indicator"></span>
       </div>
-    </div>
-  </section>
 
-  <!-- ============ RECENT WORK ============ -->
-  <section class="section recent-work-section">
-    <div class="section-inner">
-      <h2>Recent Work</h2>
+      <div class="tab-panels">
 
-      <div class="work-grid">
-
-        <!-- Replace this card's content with a real thumbnail
-             (img or video), a short description, the tools used,
-             and a project link once this piece is ready. -->
-        <div class="work-card">
-          <div class="index">01</div>
-          <h3>Anime / AMV Edit</h3>
-          <p class="status">Coming soon.</p>
+        <!-- Real showreel lives here, under the Cinematic Edit tab -->
+        <div class="tab-panel active" data-panel="cinematic">
+          <div class="showreel">
+            <video controls playsinline preload="metadata">
+              <source src="main_complete.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
         </div>
 
-        <!-- Replace this card's content with a real thumbnail
-             (img or video), a short description, the tools used,
-             and a project link once this piece is ready. -->
-        <div class="work-card">
-          <div class="index">02</div>
-          <h3>Cinematic Edit</h3>
-          <p class="status">Coming soon.</p>
+        <!-- Replace this panel with a real thumbnail/video, a short
+             description, the tools used, and a project link once
+             this piece is ready. -->
+        <div class="tab-panel" data-panel="anime">
+          <div class="empty-panel">
+            <div class="index">01</div>
+            <h3>Anime / AMV Edit</h3>
+            <p class="status">Coming soon.</p>
+          </div>
         </div>
 
-        <!-- Replace this card's content with a real thumbnail
-             (img or video), a short description, the tools used,
-             and a project link once this piece is ready. -->
-        <div class="work-card">
-          <div class="index">03</div>
-          <h3>Motion Graphics</h3>
-          <p class="status">Coming soon.</p>
+        <!-- Replace this panel with a real thumbnail/video, a short
+             description, the tools used, and a project link once
+             this piece is ready. -->
+        <div class="tab-panel" data-panel="motion">
+          <div class="empty-panel">
+            <div class="index">02</div>
+            <h3>Motion Graphics</h3>
+            <p class="status">Coming soon.</p>
+          </div>
         </div>
 
-        <!-- Replace this card's content with a real thumbnail
-             (img or video), a short description, the tools used,
-             and a project link once this piece is ready. -->
-        <div class="work-card">
-          <div class="index">04</div>
-          <h3>Short Form Content</h3>
-          <p class="status">Coming soon.</p>
+        <!-- Replace this panel with a real thumbnail/video, a short
+             description, the tools used, and a project link once
+             this piece is ready. -->
+        <div class="tab-panel" data-panel="shortform">
+          <div class="empty-panel">
+            <div class="index">03</div>
+            <h3>Short Form Content</h3>
+            <p class="status">Coming soon.</p>
+          </div>
         </div>
 
       </div>
@@ -687,6 +777,50 @@
         nav.classList.remove('is-scrolled');
       }
     });
+
+    // ---- Work tabs: sliding indicator + panel switching ----
+    const tabButtons    = document.querySelectorAll('.tab-btn');
+    const tabPanels     = document.querySelectorAll('.tab-panel');
+    const tabIndicator  = document.querySelector('.tab-indicator');
+    const showreelVideo = document.querySelector('.showreel video');
+
+    function moveIndicatorTo(btn) {
+      if (!tabIndicator || !btn) return;
+      tabIndicator.style.left  = btn.offsetLeft + 'px';
+      tabIndicator.style.width = btn.offsetWidth + 'px';
+    }
+
+    function activateTab(btn) {
+      tabButtons.forEach(function (b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+
+      const target = btn.getAttribute('data-tab');
+      tabPanels.forEach(function (panel) {
+        panel.classList.toggle('active', panel.getAttribute('data-panel') === target);
+      });
+
+      // Pause the showreel whenever its tab is no longer visible.
+      if (target !== 'cinematic' && showreelVideo) {
+        showreelVideo.pause();
+      }
+
+      moveIndicatorTo(btn);
+    }
+
+    tabButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () { activateTab(btn); });
+    });
+
+    // Position the pill correctly once fonts/layout settle, and again
+    // whenever the window is resized (tab widths change on mobile).
+    const activeTabBtn = document.querySelector('.tab-btn.active');
+    moveIndicatorTo(activeTabBtn);
+    window.addEventListener('load', function () { moveIndicatorTo(document.querySelector('.tab-btn.active')); });
+    window.addEventListener('resize', function () { moveIndicatorTo(document.querySelector('.tab-btn.active')); });
   </script>
 
 </body>
